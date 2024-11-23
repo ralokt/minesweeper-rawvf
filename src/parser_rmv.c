@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAXREP 100000
 #define MAXNAME 1000
@@ -90,7 +91,7 @@ void error(const char* msg)
 //==============================================================================================
 //Function is run if there is a parsing error
 //==============================================================================================
-_fgetc(FILE* f)
+int _fgetc(FILE* f)
 {
 	if(!feof(f)) return fgetc(f); else
 	{
