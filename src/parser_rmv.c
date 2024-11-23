@@ -213,6 +213,7 @@ int readrmv()
 	int board_size;
 	int preflags_size;
 	int properties_size;
+	int ext_properties_size;
 	int vid_size;
 	int cs_size;
 	int num_player_info;
@@ -238,14 +239,15 @@ int readrmv()
 
 	//The getint functions reads 4 bytes at a time
 	fs=getint(RMV); 					//Gets byte 6-9
-	result_string_size=getint2(RMV); 	//Gets bytes 10-11
-	version_info_size=getint2(RMV); 	//Gets bytes 12-13
-	player_info_size=getint2(RMV); 		//Gets bytes 14-15
-	board_size=getint2(RMV);       		//Gets bytes 16-17
-	preflags_size=getint2(RMV);   		//Gets bytes 18-19
-	properties_size=getint2(RMV);  		//Gets bytes 20-21
-	vid_size=getint(RMV);           	//Gets bytes 22-25
-	cs_size=getint2(RMV);          		//Gets bytes 26-27
+	if (format_version == 1) result_string_size=getint2(RMV);
+	version_info_size=getint2(RMV);
+	player_info_size=getint2(RMV);
+	board_size=getint2(RMV);
+	preflags_size=getint2(RMV);
+	properties_size=getint2(RMV);
+	if (format_version >= 2) ext_properties_size=getint2(RMV);
+	vid_size=getint(RMV);
+	cs_size=getint2(RMV);
 	_fgetc(RMV);						//Gets byte 28 which is a newline
 	
 	//Length of result_string_size starts 3 bytes before 'LEVEL' and ends on the '#' before Version
