@@ -248,42 +248,45 @@ int readrmv()
 	if (format_version >= 2) ext_properties_size=getint2(RMV);
 	vid_size=getint(RMV);
 	cs_size=getint2(RMV);
-	_fgetc(RMV);						//Gets byte 28 which is a newline
-	
-	//Length of result_string_size starts 3 bytes before 'LEVEL' and ends on the '#' before Version
-	//Version 2.2 was first to have a full length header
-	//Earlier versions could have maximum header length of 35 bytes if Intermediate and 9999.99
-	//This means it is Version 2.2 or later so we want to parse more of the header
-	if (result_string_size>35)
-	{
-	//Reads last part of string after '3BV'
-	for(i=0;i<result_string_size-32;++i) _fgetc(RMV);
 
-   	//Fetch those last 3 bytes which should contain 3bv (either :xx or xxx)
-   	//Note that lost games save 0 as the 3BV value
-   	for(i=0;i<3;++i) bbbv[i]=_fgetc(RMV);
-   	if (!isdigit(bbbv[0])) bbbv[0]=' ';
-   	if (!isdigit(bbbv[1])) bbbv[1]=' ';
-   	if (!isdigit(bbbv[2])) bbbv[2]=' ';
+	if (format_version == 1) {
+		_fgetc(RMV);						//Gets byte 28 which is a newline
 
-   	//Throw away some bytes to get to Timestamp
-   	for(i=0;i<16;++i) _fgetc(RMV);
+		//Length of result_string_size starts 3 bytes before 'LEVEL' and ends on the '#' before Version
+		//Version 2.2 was first to have a full length header
+		//Earlier versions could have maximum header length of 35 bytes if Intermediate and 9999.99
+		//This means it is Version 2.2 or later so we want to parse more of the header
+		if (result_string_size>35)
+		{
+		//Reads last part of string after '3BV'
+		for(i=0;i<result_string_size-32;++i) _fgetc(RMV);
 
-   	//Fetch Timestamp
-   	for(i=0;i<10;++i) timestamp[i]=_fgetc(RMV);
+		//Fetch those last 3 bytes which should contain 3bv (either :xx or xxx)
+		//Note that lost games save 0 as the 3BV value
+		for(i=0;i<3;++i) bbbv[i]=_fgetc(RMV);
+		if (!isdigit(bbbv[0])) bbbv[0]=' ';
+		if (!isdigit(bbbv[1])) bbbv[1]=' ';
+		if (!isdigit(bbbv[2])) bbbv[2]=' ';
+
+		//Throw away some bytes to get to Timestamp
+		for(i=0;i<16;++i) _fgetc(RMV);
+
+		//Fetch Timestamp
+		for(i=0;i<10;++i) timestamp[i]=_fgetc(RMV);
+		}
+
+		//Release 2 beta and earlier versions do not have 3bv or Timestamp
+		else
+		{
+		bbbv[0]='0';
+		timestamp[0]='0';
+		for(i=0;i<result_string_size-3;++i) _fgetc(RMV);
+		}
+
+		//Throw away the 2 bytes '# ' before 'Vienna...'
+		_fgetc(RMV);
+		_fgetc(RMV);
 	}
-	
-   	//Release 2 beta and earlier versions do not have 3bv or Timestamp	
-	else
-	{
-	bbbv[0]='0';
-	timestamp[0]='0';
-   	for(i=0;i<result_string_size-3;++i) _fgetc(RMV);
-	}
-
-	//Throw away the 2 bytes '# ' before 'Vienna...'
-	_fgetc(RMV);
-	_fgetc(RMV);
 
 	//Program is 18 bytes 'Vienna Minesweeper'
 	for(i=0;i<18;++i) program[i]=_fgetc(RMV);
