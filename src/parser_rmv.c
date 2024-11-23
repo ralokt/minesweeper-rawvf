@@ -231,6 +231,11 @@ int readrmv()
 	unsigned int format_version = getint2(RMV);
 	if(format_version == 0 || format_version > 2) error("Invalid video type");
 
+	if (format_version == 2) {
+		unsigned char clone_id = getint(RMV);
+		unsigned char major_version_of_clone = getint(RMV);
+	}
+
 	//The getint functions reads 4 bytes at a time
 	fs=getint(RMV); 					//Gets byte 6-9
 	result_string_size=getint2(RMV); 	//Gets bytes 10-11
