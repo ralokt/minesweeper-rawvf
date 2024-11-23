@@ -228,7 +228,8 @@ int readrmv()
 
 	//The getint2 function reads 2 bytes at a time
 	//In legitimate videos byte 4=0 and byte 5=1, getint2 sum is thus 1
-	if(getint2(RMV)!=1) error("Invalid video type");
+	unsigned int format_version = getint2(RMV);
+	if(format_version == 0 || format_version > 2) error("Invalid video type");
 
 	//The getint functions reads 4 bytes at a time
 	fs=getint(RMV); 					//Gets byte 6-9
